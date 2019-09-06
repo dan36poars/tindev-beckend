@@ -31,4 +31,7 @@ app.use(cors());
 app.use(express.json());
 app.use(routes);
 
-server.listen(3333);
+const port = process.env.PORT || 8080
+server.listen(port, function() {
+	console.log('running express in http://localhost:'+ port);
+});
