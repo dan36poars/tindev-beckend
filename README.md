@@ -6,4 +6,4 @@
 	 		or
 	 		`npm dev`
 
-> rockseat teaching project in omnistack week.
+> rocketseat teaching project in omnistack week.
