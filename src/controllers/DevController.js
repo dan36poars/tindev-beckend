@@ -1,46 +1,45 @@
 const axios = require('axios');
-const Dev = require('../models/Dev.js');
+const Dev = require('../models/Dev');
 
 module.exports = {
-	async store(req, res) {
-		const { username } = req.body;
+    async create(req, res) {
+        const { username, email, tel, languages } = req.body;
 
-		const userExists = await Dev.findOne({ user: username });
+        const userExists = await Dev.findOne({ user: username });
 
-		if (userExists) {
-			return res.json(userExists);
-		}
+        if (userExists) {
+            return res.json(userExists);
+        }
 
-		const response = await axios.get(`https://api.github.com/users/${username}`);
+        const response = await axios.get(`https://api.github.com/users/${username}`);
 
-		const { name, bio, avatar_url: avatar } = response.data;
+        const { name, bio, avatar_url: avatar } = response.data;
 
-		const dev = await Dev.create({ 
-			name,
-			user: username,
-			bio,
-			avatar
-		});
+        const dev = await Dev.create({
+            name,
+            email,
+            user: username,
+            tel,
+            bio,
+            languages,
+            avatar
+        });
+        return res.json(dev);
+    },
 
-		return res.json(dev);
-	},
+    async index(req, res) {
+        const { userid } = req.headers;
 
-	async index(req, res) {
-		const { user } = req.headers;
+        const LoggedDev = await Dev.findById( userid );
 
-		const loggedDev = await Dev.findById(user);
+        const users = await Dev.find({
+            $and: [
+                { _id: { $ne: userid } },
+                { _id: { $nin: LoggedDev.likes } },
+                { _id: { $nin: LoggedDev.dislike } }
+            ]
+        });
 
-		const users = await Dev.find({
-			$and: [
-				{ _id: { $ne: user } },
-				{ _id: { $nin: loggedDev.likes } },
-				{ _id: { $nin: loggedDev.deslikes } },
-			],
-		})
-		return res.json( users );
-	}
-
-
-
-
-}
+        return res.json(users);
+    } 
+};
