@@ -1,3 +1,4 @@
+require("dotenv").config();
 const express = require('express');
 const mongoose = require('mongoose');
 const routes  = require('./routes.js');
@@ -7,7 +8,13 @@ const app = express();
 const server = require('http').Server(app);
 const io = require('socket.io')(server);
 
-mongoose.connect('mongodb+srv://geekyweb-01:geekyweb01grem29rsdapoa@cluster0-9jotn.mongodb.net/ominstackrevisited?retryWrites=true&w=majority', {
+
+/**
+ * Database Setup
+ */
+mongoose.connect(
+	process.env.MONGO_URL
+	, {
 	useNewUrlParser: true
 });
 
